@@ -6,3 +6,6 @@
     1.4 rusty code
 2. open folder lab2
 3. ctrl + shift + p -> cargo build
+
+for debug look at:
+https://fungos.github.io/blog/2017/08/12/setting-up-a-rust-environment-on-windows/
