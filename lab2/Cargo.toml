@@ -1,0 +1,6 @@
+[package]
+name = "lab2"
+version = "0.1.0"
+authors = ["Mykhailo Stolovych <mstolovych@outlook.com>"]
+
+[dependencies]
