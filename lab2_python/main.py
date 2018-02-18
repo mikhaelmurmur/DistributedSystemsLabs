@@ -37,6 +37,9 @@ def connect():
 
         print('PostgreSQL database version:')
         cur.execute('SELECT version()')
+        
+        db_version = cur.fetchone()
+        print(db_version)
 
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
