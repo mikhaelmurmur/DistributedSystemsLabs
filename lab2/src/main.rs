@@ -13,10 +13,10 @@ struct Person {
 fn main() {
 
     let user_password : Option<&str> = Some("QAZxswedc123-");
-    let host_addr = std::string::String::from("<connectionstring>");
+    let host_addr = std::string::String::from("postgres://postgres@localhost:5433");
 
     let params = ConnectParams::builder()
-    .user("<Username>",user_password)
+    .user("postgres",user_password)
     .build(Host::Unix(host_addr));
 
     let conn = Connection::connect(params, TlsMode::None).unwrap();
