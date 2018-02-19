@@ -26,22 +26,46 @@ def connect():
     conn = None
     try:
         # read connection parameters
-        params = config()
+        paramsflight = config('databaseflight.ini')
+        paramshotel = config('databasehotel.ini')
  
         # connect to the PostgreSQL server
         print('Connecting to the PostgreSQL database...')
-        conn = psycopg2.connect(**params)
- 
-        # create a cursor
-        cur = conn.cursor()
+        connFlight = psycopg2.connect(**paramsflight)
+        connHotel = psycopg2.connect(**paramshotel)
 
-        print('PostgreSQL database version:')
-        cur.execute('SELECT version()')
+
+        connFlight.tpc_begin(connFlight.xid(42, 'transaction ID', 'connection 1'))
+        connHotel.tpc_begin(connHotel.xid(42, 'transaction ID', 'connection 2'))
         
-        db_version = cur.fetchone()
-        print(db_version)
+        try:
+            
+            curFlight = connFlight.cursor()
+            curHotel = connHotel.cursor()
+            curHotel.execute('Insert into booking (clientname,hotelname,arrival,departure) VALUES ( \'Paul\', \'Ritz\', to_date(\'21-02-2010\', \'DD-MM-YYYY\') , to_date(\'21-03-2010\', \'DD-MM-YYYY\') );')
+            
+            connFlight.tpc_prepare()    
+            connHotel.tpc_prepare()
 
-        cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+            
+            connFlight.tpc_rollback()
+            connHotel.tpc_rollback()
+        else:
+            connFlight.tpc_commit()
+            connHotel.tpc_commit()
+
+        # create a cursor
+        # cur = conn.cursor()
+
+        # cur.execute('SELECT version()')
+        # print('PostgreSQL database version:')
+        
+        # db_version = cur.fetchone()
+        # print(db_version)
+
+        # cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
             print(error)
     finally:
